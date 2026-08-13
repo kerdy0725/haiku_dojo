@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://haiku-dojo-web.vercel.app"),
   title: "俳句道場｜一句を磨く、静かな稽古場",
   description: "俳句を五つの観点から採点し、講評と推敲例をお届けします。",
 };

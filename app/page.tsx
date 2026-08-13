@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import type { HaikuResult } from "@/lib/haiku";
+import { makeShareSearchParams } from "@/lib/share";
 
 const sample = "古池や\n蛙飛びこむ\n水の音";
 
@@ -70,14 +71,58 @@ export default function Home() {
         </form>
       </section>
 
-      {result && <Result result={result} />}
+      {result && <Result haiku={haiku} result={result} />}
 
       <footer><span>俳句道場</span><p>正解は一つではありません。講評を手がかりに、あなたの一句を。</p></footer>
     </main>
   );
 }
 
-function Result({ result }: { result: HaikuResult }) {
+function Result({ haiku, result }: { haiku: string; result: HaikuResult }) {
+  const [downloading, setDownloading] = useState(false);
+  const [shareError, setShareError] = useState("");
+
+  function getShareUrls() {
+    const query = makeShareSearchParams({
+      haiku,
+      score: result.score,
+      rank: result.rank,
+      headline: result.headline,
+    }).toString();
+    return {
+      page: `${window.location.origin}/share?${query}`,
+      image: `${window.location.origin}/api/share-image?${query}`,
+    };
+  }
+
+  function postToX() {
+    const { page } = getShareUrls();
+    const text = `${haiku.trim()}\n\n俳句道場の採点：${result.score}点（${result.rank}）\n${result.headline}\n\n#haiku-dojo`;
+    const intent = new URL("https://twitter.com/intent/tweet");
+    intent.searchParams.set("text", text);
+    intent.searchParams.set("url", page);
+    window.open(intent.toString(), "_blank", "noopener,noreferrer");
+  }
+
+  async function downloadImage() {
+    setDownloading(true);
+    setShareError("");
+    try {
+      const response = await fetch(getShareUrls().image);
+      if (!response.ok) throw new Error("画像を作成できませんでした。");
+      const blobUrl = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = `haiku-dojo-${result.score}.png`;
+      anchor.click();
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      setShareError(error instanceof Error ? error.message : "画像を作成できませんでした。");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   return (
     <section className="result" id="result">
       <div className="result-title"><p className="eyebrow">稽古の記録</p><h2>師匠からの講評</h2></div>
@@ -96,6 +141,15 @@ function Result({ result }: { result: HaikuResult }) {
       <div className="lists">
         <article><span className="list-icon good">○</span><h3>この句のよいところ</h3><ul>{result.strengths.map((item) => <li key={item}>{item}</li>)}</ul></article>
         <article><span className="list-icon next">↗</span><h3>次の推敲で試すこと</h3><ul>{result.improvements.map((item) => <li key={item}>{item}</li>)}</ul></article>
+      </div>
+
+      <div className="share-panel">
+        <div><p className="eyebrow">SHARE YOUR HAIKU</p><h2>この一句を、Xへ。</h2><p>俳句・採点結果・画像カード・URL・#haiku-dojo をまとめて投稿できます。</p></div>
+        <div className="share-actions">
+          <button type="button" className="x-share" onClick={postToX}><span>𝕏</span> Xに投稿する</button>
+          <button type="button" className="image-download" onClick={downloadImage} disabled={downloading}>{downloading ? "画像を作成中…" : "結果画像を保存"}</button>
+          {shareError && <p className="error" role="alert">{shareError}</p>}
+        </div>
       </div>
 
       <div className="examples">
