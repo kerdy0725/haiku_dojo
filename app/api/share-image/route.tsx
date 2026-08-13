@@ -49,7 +49,7 @@ function ScoreImage({ haiku, score, rank, headline }: ReturnType<typeof parseSha
         </div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", color: "#6f6d63", fontSize: 16, letterSpacing: ".1em" }}>
-        <span>ことばを削り、景色を残す。</span><span>#haiku-dojo</span>
+        <span>ことばを削り、景色を残す。</span><span>#haiku_dojo</span>
       </div>
     </div>
   );
@@ -58,7 +58,7 @@ function ScoreImage({ haiku, score, rank, headline }: ReturnType<typeof parseSha
 function FallbackImage({ score }: { score: number }) {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", color: "#25251f", background: "#f4f0e7", padding: "80px", fontFamily: "serif" }}>
-      <div style={{ display: "flex", flexDirection: "column" }}><span style={{ color: "#a43c2f", fontSize: 28, letterSpacing: ".2em" }}>HAIKU DOJO</span><strong style={{ marginTop: 28, fontSize: 58 }}>YOUR SCORE</strong><span style={{ marginTop: 24, color: "#6f6d63", fontSize: 24 }}>#haiku-dojo</span></div>
+      <div style={{ display: "flex", flexDirection: "column" }}><span style={{ color: "#a43c2f", fontSize: 28, letterSpacing: ".2em" }}>HAIKU DOJO</span><strong style={{ marginTop: 28, fontSize: 58 }}>YOUR SCORE</strong><span style={{ marginTop: 24, color: "#6f6d63", fontSize: 24 }}>#haiku_dojo</span></div>
       <div style={{ width: 280, height: 280, display: "flex", alignItems: "center", justifyContent: "center", border: "14px solid #a43c2f", borderRadius: 999, background: "#fbfaf6", fontSize: 105 }}>{score}</div>
     </div>
   );
@@ -67,7 +67,7 @@ function FallbackImage({ score }: { score: number }) {
 export async function GET(request: Request) {
   const payload = parseSharePayload(new URL(request.url).searchParams);
   try {
-    const fontData = await loadJapaneseFont(`俳句道場稽古の記録点ことばを削り景色を残すHAIKUDOJYOURSC#haiku-dojo0123456789/・${payload.haiku}${payload.rank}${payload.headline}`);
+    const fontData = await loadJapaneseFont(`俳句道場稽古の記録点ことばを削り景色を残すHAIKUDOJYOURSC#haiku_dojo0123456789/・_${payload.haiku}${payload.rank}${payload.headline}`);
     return new ImageResponse(<ScoreImage {...payload} />, {
       ...size,
       fonts: [{ name: "Noto Serif JP", data: fontData, weight: 600, style: "normal" }],

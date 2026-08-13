@@ -36,6 +36,14 @@ export default function Home() {
     }
   }
 
+  function clearForm() {
+    setHaiku("");
+    setReading("");
+    setResult(null);
+    setError("");
+    requestAnimationFrame(() => document.getElementById("haiku")?.focus());
+  }
+
   return (
     <main>
       <header className="site-header">
@@ -66,6 +74,7 @@ export default function Home() {
             <input aria-label="俳句の読み" value={reading} onChange={(e) => setReading(e.target.value)} maxLength={180} placeholder="はるのあめ／まどべにのこる／ゆびのあと" />
           </details>
           <button className="submit" disabled={!haiku.trim() || loading}>{loading ? <><i /> 師匠が一句を読んでいます</> : <>この句を採点する <b>→</b></>}</button>
+          <button type="button" className="clear-form" onClick={clearForm} disabled={loading || (!haiku && !reading && !result)}>入力をクリア</button>
           {error && <p className="error" role="alert">{error}</p>}
           <p className="privacy">入力した俳句は、この画面には保存されません。</p>
         </form>
@@ -97,7 +106,7 @@ function Result({ haiku, result }: { haiku: string; result: HaikuResult }) {
 
   function postToX() {
     const { page } = getShareUrls();
-    const text = `${haiku.trim()}\n\n俳句道場の採点：${result.score}点（${result.rank}）\n${result.headline}\n\n#haiku-dojo`;
+    const text = `${haiku.trim()}\n\n俳句道場の採点：${result.score}点（${result.rank}）\n${result.headline}\n\n#haiku_dojo`;
     const intent = new URL("https://twitter.com/intent/tweet");
     intent.searchParams.set("text", text);
     intent.searchParams.set("url", page);
@@ -144,7 +153,7 @@ function Result({ haiku, result }: { haiku: string; result: HaikuResult }) {
       </div>
 
       <div className="share-panel">
-        <div><p className="eyebrow">SHARE YOUR HAIKU</p><h2>この一句を、Xへ。</h2><p>俳句・採点結果・画像カード・URL・#haiku-dojo をまとめて投稿できます。</p></div>
+        <div><p className="eyebrow">SHARE YOUR HAIKU</p><h2>この一句を、Xへ。</h2><p>俳句・採点結果・画像カード・URL・#haiku_dojo をまとめて投稿できます。</p></div>
         <div className="share-actions">
           <button type="button" className="x-share" onClick={postToX}><span>𝕏</span> Xに投稿する</button>
           <button type="button" className="image-download" onClick={downloadImage} disabled={downloading}>{downloading ? "画像を作成中…" : "結果画像を保存"}</button>

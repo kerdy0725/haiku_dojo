@@ -38,6 +38,9 @@ details input { width: 100%; margin-top: 12px; padding: 12px 14px; background: #
 .submit:disabled { cursor: not-allowed; opacity: .55; }
 .submit b { float: right; margin-right: 18px; }
 .submit i { display: inline-block; width: 13px; height: 13px; margin-right: 10px; border: 2px solid #ffffff55; border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; }
+.clear-form { width: 100%; min-height: 42px; margin-top: 9px; color: var(--muted); background: transparent; border: 1px solid var(--line); cursor: pointer; font-size: 11px; letter-spacing: .08em; transition: .2s; }
+.clear-form:hover:not(:disabled) { color: var(--red); border-color: var(--red); }
+.clear-form:disabled { cursor: not-allowed; opacity: .42; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .privacy, .error { margin: 12px 0 0; text-align: center; color: #99958b; font-size: 10px; }
 .error { color: var(--red); font-size: 12px; }
