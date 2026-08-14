@@ -24,7 +24,7 @@ export function parseSharePayload(searchParams: URLSearchParams): SharePayload {
 
 export function makeShareSearchParams(payload: SharePayload) {
   return new URLSearchParams({
-    v: "2",
+    v: "3",
     haiku: clean(payload.haiku, 120),
     score: String(Math.min(100, Math.max(0, Math.round(payload.score)))),
     rank: clean(payload.rank, 20),
