@@ -3,6 +3,27 @@ import { parseSharePayload } from "@/lib/share";
 
 const size = { width: 1200, height: 630 };
 
+function ScoreRing({ score, diameter = 238, strokeWidth = 12 }: { score: number; diameter?: number; strokeWidth?: number }) {
+  const radius = (diameter - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const progress = circumference * (score / 100);
+
+  return (
+    <div style={{ position: "relative", width: diameter, height: diameter, display: "flex", alignItems: "center", justifyContent: "center", background: "#fbfaf6", borderRadius: 999 }}>
+      <svg width={diameter} height={diameter} viewBox={`0 0 ${diameter} ${diameter}`} style={{ position: "absolute", inset: 0 }}>
+        <g transform={`rotate(-90 ${diameter / 2} ${diameter / 2})`}>
+          <circle cx={diameter / 2} cy={diameter / 2} r={radius} fill="none" stroke="#ded9cf" strokeWidth={strokeWidth} />
+          <circle cx={diameter / 2} cy={diameter / 2} r={radius} fill="none" stroke="#a43c2f" strokeWidth={strokeWidth} strokeDasharray={`${progress} ${circumference - progress}`} />
+        </g>
+      </svg>
+      <div style={{ zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <strong style={{ fontSize: diameter * 0.387, lineHeight: 1 }}>{score}</strong>
+        <span style={{ color: "#6f6d63", fontSize: diameter * 0.084 }}>/ 100</span>
+      </div>
+    </div>
+  );
+}
+
 async function loadJapaneseFont(text: string) {
   const cssUrl = new URL("https://fonts.googleapis.com/css2");
   cssUrl.searchParams.set("family", "Noto Serif JP:wght@600");
@@ -41,10 +62,7 @@ function ScoreImage({ haiku, score, rank, headline }: ReturnType<typeof parseSha
           <div style={{ marginTop: 28, color: "#6f6d63", fontSize: 22 }}>{headline}</div>
         </div>
         <div style={{ width: 295, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <div style={{ width: 238, height: 238, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", border: "12px solid #a43c2f", borderRadius: 999, background: "#fbfaf6" }}>
-            <strong style={{ fontSize: 92, lineHeight: 1 }}>{score}</strong>
-            <span style={{ color: "#6f6d63", fontSize: 20 }}>/ 100</span>
-          </div>
+          <ScoreRing score={score} />
           <div style={{ marginTop: 19, padding: "7px 18px", color: "#a43c2f", border: "2px solid #a43c2f", fontSize: 17, letterSpacing: ".14em" }}>{rank}</div>
         </div>
       </div>
@@ -59,7 +77,7 @@ function FallbackImage({ score }: { score: number }) {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", color: "#25251f", background: "#f4f0e7", padding: "80px", fontFamily: "serif" }}>
       <div style={{ display: "flex", flexDirection: "column" }}><span style={{ color: "#a43c2f", fontSize: 28, letterSpacing: ".2em" }}>HAIKU DOJO</span><strong style={{ marginTop: 28, fontSize: 58 }}>YOUR SCORE</strong><span style={{ marginTop: 24, color: "#6f6d63", fontSize: 24 }}>#haiku_dojo</span></div>
-      <div style={{ width: 280, height: 280, display: "flex", alignItems: "center", justifyContent: "center", border: "14px solid #a43c2f", borderRadius: 999, background: "#fbfaf6", fontSize: 105 }}>{score}</div>
+      <ScoreRing score={score} diameter={280} strokeWidth={14} />
     </div>
   );
 }
